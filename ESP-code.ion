@@ -1,0 +1,151 @@
+#include <WiFi.h>
+#include <DHT.h>
+
+// Wi-Fi credentials
+const char* ssid = "Your_SSID";
+const char* password = "Your_Password";
+
+// Motor Pins
+#define IN1 26
+#define IN2 27
+#define IN3 14
+#define IN4 12
+
+// Ultrasonic Pins
+#define TRIG_PIN 5
+#define ECHO_PIN 18
+
+// DHT Sensor
+#define DHTPIN 33
+#define DHTTYPE DHT11  
+DHT dht(DHTPIN, DHTTYPE);
+
+WiFiServer server(80);
+
+float temperature = 0.0;
+float humidity = 0.0;
+long distance = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT);
+  pinMode(TRIG_PIN, OUTPUT); pinMode(ECHO_PIN, INPUT);
+
+  dht.begin();
+
+
+  IPAddress local_IP(192, 168, 1, 200);  // Choose an unused IP
+  IPAddress gateway(192, 168, 1, 1);     // Your router's IP
+  IPAddress subnet(255, 255, 255, 0);    // Common subnet mask
+
+  WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
+
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500); Serial.print(".");
+  }
+  Serial.println("\nConnected! IP address:");
+  Serial.println(WiFi.localIP());
+
+  server.begin();
+}
+
+long getDistance() {
+  digitalWrite(TRIG_PIN, LOW); delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH); delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  return duration * 0.034 / 2;
+}
+
+void moveForward() {
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+
+void stopMotors() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+}
+
+void turnLeft() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+  delay(400);
+  stopMotors();
+}
+
+void loop() {
+  // Get Distance
+  distance = getDistance();
+  Serial.print("Ultrasonic Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Obstacle Avoidance Logic
+  if (distance > 10) {
+    moveForward();
+    Serial.println("Moving Forward");
+  } else {
+    stopMotors();
+    Serial.println("Obstacle Detected - Turning Left");
+    delay(200);
+    turnLeft();
+  }
+
+  // Get Temp & Humidity
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+
+  Serial.print("Temperature: ");
+  if (isnan(temperature)) {
+    Serial.println("Failed to read");
+  } else {
+    Serial.print(temperature);
+    Serial.println(" °C");
+  }
+
+  Serial.print("Humidity: ");
+  if (isnan(humidity)) {
+    Serial.println("Failed to read");
+  } else {
+    Serial.print(humidity);
+    Serial.println(" %");
+  }
+
+  // Serve Web Page
+ // Serve Web Page
+WiFiClient client = server.available();
+if (client) {
+  client.readStringUntil('\r');  // Read HTTP request
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println();
+  client.print("<!DOCTYPE html><html><head>");
+  client.print("<title>ESP32 Telematics</title>");
+  client.print("<style>");
+  client.print("body { font-family: Arial; background-color: #f2f2f2; padding: 20px; text-align: center; }");
+  client.print("h2 { color: #0077cc; }");
+  client.print(".card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }");
+  client.print("p { font-size: 20px; margin: 10px 0; }");
+  client.print("</style>");
+  client.print("<meta http-equiv='refresh' content='5'>");
+  client.print("</head><body>");
+  client.print("<div class='card'>");
+  client.print("<h2>ESP32 Telematics Dashboard</h2>");
+  client.print("<p><strong>Temperature:</strong> ");
+  client.print(isnan(temperature) ? "Error" : String(temperature) + " °C");
+  client.print("</p><p><strong>Humidity:</strong> ");
+  client.print(isnan(humidity) ? "Error" : String(humidity) + " %");
+  client.print("</p><p><small>Updated at ");
+  client.print(millis() / 1000);
+  client.print(" sec</small></p>");
+  client.print("</div></body></html>");
+  client.stop();
+}
+
+  delay(2000); // Small delay to avoid Serial flooding
+}
