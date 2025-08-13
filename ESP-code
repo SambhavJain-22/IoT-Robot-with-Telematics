@@ -41,6 +41,7 @@ void setup() {
   IPAddress local_IP(192, 168, 1, 200);  // Choose an unused IP
   IPAddress gateway(192, 168, 1, 1);     // Your router's IP
   IPAddress subnet(255, 255, 255, 0);    // Common subnet mask
+  //Crated By Sambhav Jain 
 
   WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
 
@@ -61,6 +62,7 @@ long getDistance() {
   digitalWrite(TRIG_PIN, LOW);
   long duration = pulseIn(ECHO_PIN, HIGH);
   return duration * 0.034 / 2;
+//Crated By Sambhav Jain 
 }
 
 void moveForward() {
@@ -76,6 +78,7 @@ void stopMotors() {
 void turnLeft() {
   digitalWrite(IN1, LOW); digitalWrite(IN2, HIGH);
   digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+  //Crated By Sambhav Jain 
   delay(400);
   stopMotors();
 }
@@ -85,6 +88,7 @@ void loop() {
   distance = getDistance();
   Serial.print("Ultrasonic Distance: ");
   Serial.print(distance);
+  //Crated By Sambhav Jain 
   Serial.println(" cm");
 
   // Obstacle Avoidance Logic
@@ -93,6 +97,7 @@ void loop() {
     Serial.println("Moving Forward");
   } else {
     stopMotors();
+    //Crated By Sambhav Jain 
     Serial.println("Obstacle Detected - Turning Left");
     delay(200);
     turnLeft();
@@ -105,6 +110,7 @@ void loop() {
   Serial.print("Temperature: ");
   if (isnan(temperature)) {
     Serial.println("Failed to read");
+  //Crated By Sambhav Jain 
   } else {
     Serial.print(temperature);
     Serial.println(" °C");
@@ -113,6 +119,7 @@ void loop() {
   Serial.print("Humidity: ");
   if (isnan(humidity)) {
     Serial.println("Failed to read");
+  //Crated By Sambhav Jain 
   } else {
     Serial.print(humidity);
     Serial.println(" %");
@@ -125,30 +132,38 @@ if (client) {
   client.readStringUntil('\r');  // Read HTTP request
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: text/html");
+  //Crated By Sambhav Jain 
   client.println();
   client.print("<!DOCTYPE html><html><head>");
   client.print("<title>ESP32 Telematics --- By: Sambhav Jain</title>");
   client.print("<style>");
   client.print("body { font-family: Arial; background-color: #f2f2f2; padding: 20px; text-align: center; }");
   client.print("h2 { color: #0077cc; }");
+  //Crated By Sambhav Jain 
   client.print(".card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }");
   client.print("p { font-size: 20px; margin: 10px 0; }");
   client.print("</style>");
   client.print("<meta http-equiv='refresh' content='5'>");
   client.print("</head><body>");
+  //Crated By Sambhav Jain 
   client.print("<div class='card'>");
   client.print("<h2>ESP32 Telematics Dashboard</h2>");
   client.print("<h5>Created By: Sambhav Jain</h5>");
+  //Crated By Sambhav Jain 
   client.print("<p><strong>Temperature:</strong> ");
   client.print(isnan(temperature) ? "Error" : String(temperature) + " °C");
   client.print("</p><p><strong>Humidity:</strong> ");
+  //Crated By Sambhav Jain 
   client.print(isnan(humidity) ? "Error" : String(humidity) + " %");
   client.print("</p><p><small>Updated at ");
   client.print(millis() / 1000);
   client.print(" sec</small></p>");
+  //Crated By Sambhav Jain 
   client.print("</div></body></html>");
   client.stop();
 }
 
   delay(2000); // Small delay to avoid Serial flooding
 }
+//Crated By Sambhav Jain 
+//Crated By Sambhav Jain 
