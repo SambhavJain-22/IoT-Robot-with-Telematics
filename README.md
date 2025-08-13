@@ -17,11 +17,7 @@ This project is a smart robot built using an **ESP32** that can autonomously **a
 
 ## 📷 Preview
 
-### 🔧 Robot Setup
-![Robot Front View](Images/robot_front_view.jpg)
-
-### 📊 Web Dashboard
-![Web Dashboard](Images/dashboard_screenshot.png)
+https://drive.google.com/drive/folders/1FRYqfRP3BzWJMD8TRQFyIuD8AB5D5_-T
 
 ---
 
@@ -38,11 +34,3 @@ This project is a smart robot built using an **ESP32** that can autonomously **a
 | Battery              | 1        | Power supply                     |
 
 ---
-
-## 📁 Folder Structure
-```bash
-├── Arduino_Code/                  # Main Arduino .ino sketch
-├── Images/                        # Photos, screenshots, diagrams
-├── Documents/                     # PDF report or supporting docs
-├── README.md                      # This file
-└── LICENSE                        # (Optional) Open-source license
