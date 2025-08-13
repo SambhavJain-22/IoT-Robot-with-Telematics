@@ -1,3 +1,5 @@
+//Crated By Sambhav Jain on 05/07/2025
+
 #include <WiFi.h>
 #include <DHT.h>
 
@@ -125,7 +127,7 @@ if (client) {
   client.println("Content-Type: text/html");
   client.println();
   client.print("<!DOCTYPE html><html><head>");
-  client.print("<title>ESP32 Telematics</title>");
+  client.print("<title>ESP32 Telematics --- By: Sambhav Jain</title>");
   client.print("<style>");
   client.print("body { font-family: Arial; background-color: #f2f2f2; padding: 20px; text-align: center; }");
   client.print("h2 { color: #0077cc; }");
@@ -136,6 +138,7 @@ if (client) {
   client.print("</head><body>");
   client.print("<div class='card'>");
   client.print("<h2>ESP32 Telematics Dashboard</h2>");
+  client.print("<h5>Created By: Sambhav Jain</h5>");
   client.print("<p><strong>Temperature:</strong> ");
   client.print(isnan(temperature) ? "Error" : String(temperature) + " °C");
   client.print("</p><p><strong>Humidity:</strong> ");
